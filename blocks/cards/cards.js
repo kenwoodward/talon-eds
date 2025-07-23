@@ -5,7 +5,7 @@ function truncateText(text, maxLength = 150) {
   return text.substring(0, maxLength).trim() + '...';
 }
 
-function truncateHtmlContent(element, maxLength = 150) {
+function truncateHtmlContent(element, maxLength = 175) {
   // Get all text nodes in the element
   const walker = document.createTreeWalker(
     element,

@@ -1,0 +1,17 @@
+@keyframes tumbleweed-roll {
+  0% {
+    transform: translateX(0) rotate(0deg);
+    left: -50px;
+  }
+  100% {
+    transform: translateX(calc(100vw + 50px)) rotate(720deg);
+    left: calc(100vw + 50px);
+  }
+}
+
+.tumbleweed {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+} 

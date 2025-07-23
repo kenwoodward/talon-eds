@@ -52,12 +52,101 @@ function focusNavSection() {
 }
 
 /**
+ * Recursively processes nested navigation items
+ * @param {Element} container The container element to process
+ */
+function processNestedNav(container) {
+  console.log('=== PROCESSING NESTED NAV START ===');
+  console.log('Processing container:', container);
+  console.log('Container HTML:', container.innerHTML);
+  const navItems = container.querySelectorAll('li');
+  console.log('Found li elements:', navItems.length);
+  
+  navItems.forEach((item, index) => {
+    console.log(`Processing item ${index}:`, item.textContent.trim());
+    const nestedUl = item.querySelector('ul');
+    
+    if (nestedUl) {
+      console.log(`Item ${index} has nested ul with ${nestedUl.children.length} children`);
+      console.log(`Nested ul HTML:`, nestedUl.outerHTML);
+      item.classList.add('nav-drop');
+      
+      // Set initial aria-expanded state
+      item.setAttribute('aria-expanded', 'false');
+      
+      // Process nested items recursively
+      processNestedNav(nestedUl);
+      
+      // Add click handler for this level
+      console.log(`Adding click handler to item ${index}:`, item.textContent.trim());
+      
+      // Remove any existing click handlers first
+      item.removeEventListener('click', item._clickHandler);
+      
+      // Create the click handler function
+      item._clickHandler = (e) => {
+        console.log('=== CLICK EVENT FIRED ===');
+        console.log('Click event fired on:', item.textContent.trim());
+        console.log('isDesktop.matches:', isDesktop.matches);
+        console.log('Item HTML before click:', item.outerHTML);
+        
+        if (isDesktop.matches) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const expanded = item.getAttribute('aria-expanded') === 'true';
+          console.log('Current expanded state:', expanded);
+          
+          // Close all other items at the same level
+          const siblings = item.parentElement.children;
+          Array.from(siblings).forEach((sibling) => {
+            if (sibling !== item) {
+              sibling.setAttribute('aria-expanded', 'false');
+            }
+          });
+          
+          // Toggle this item
+          const newExpanded = !expanded;
+          console.log('About to set aria-expanded to:', newExpanded);
+          
+          // Test: Set a different attribute first to see if setAttribute works
+          item.setAttribute('data-test', 'working');
+          console.log('Test attribute set:', item.getAttribute('data-test'));
+          
+          item.setAttribute('aria-expanded', newExpanded);
+          console.log('Attribute set. Checking if it worked...');
+          const actualValue = item.getAttribute('aria-expanded');
+          console.log('Actual aria-expanded value after setting:', actualValue);
+          console.log('New expanded state:', newExpanded);
+          console.log('Item HTML after toggle:', item.outerHTML);
+          
+          // Force a reflow to ensure CSS updates
+          item.offsetHeight;
+          
+          console.log('Clicked nav item:', item.textContent.trim(), 'Expanded:', newExpanded);
+        }
+      };
+      
+      // Add the click handler
+      item.addEventListener('click', item._clickHandler);
+      console.log(`Click handler added successfully to item ${index}`);
+      
+      console.log(`Added click handler to item ${index}`);
+    } else {
+      console.log(`Item ${index} has no nested ul`);
+    }
+  });
+  console.log('=== PROCESSING NESTED NAV END ===');
+}
+
+/**
  * Toggles all nav sections
  * @param {Element} sections The container element
  * @param {Boolean} expanded Whether the element should be expanded or collapsed
  */
 function toggleAllNavSections(sections, expanded = false) {
-  sections.querySelectorAll('.nav-sections .default-content-wrapper > ul > li').forEach((section) => {
+  // Only toggle top-level nav-drop elements, not nested ones
+  sections.querySelectorAll('.default-content-wrapper > ul > li.nav-drop').forEach((section) => {
     section.setAttribute('aria-expanded', expanded);
   });
 }
@@ -108,10 +197,15 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
+  console.log('Starting header decoration...');
+  
   // load nav as fragment
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
+  console.log('Loading nav from path:', navPath);
+  
   const fragment = await loadFragment(navPath);
+  console.log('Loaded fragment:', fragment);
 
   // decorate nav DOM
   block.textContent = '';
@@ -133,17 +227,29 @@ export default async function decorate(block) {
   }
 
   const navSections = nav.querySelector('.nav-sections');
+  console.log('Found navSections:', navSections);
+  
   if (navSections) {
-    navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
-      if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
-      navSection.addEventListener('click', () => {
-        if (isDesktop.matches) {
-          const expanded = navSection.getAttribute('aria-expanded') === 'true';
-          toggleAllNavSections(navSections);
-          navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-        }
-      });
+    console.log('Nav sections HTML:', navSections.innerHTML);
+    console.log('About to call processNestedNav...');
+    
+    // Process all nested navigation items recursively
+    try {
+      processNestedNav(navSections);
+      console.log('processNestedNav completed successfully');
+    } catch (error) {
+      console.error('Error in processNestedNav:', error);
+    }
+    
+    // Debug: Log all nav-drop elements
+    const navDrops = navSections.querySelectorAll('.nav-drop');
+    console.log('Found nav-drop elements:', navDrops.length);
+    navDrops.forEach((drop, index) => {
+      console.log(`Nav-drop ${index}:`, drop.textContent.trim());
+      console.log(`Nav-drop ${index} HTML:`, drop.outerHTML);
     });
+  } else {
+    console.error('navSections not found!');
   }
 
   // hamburger for mobile
@@ -163,4 +269,6 @@ export default async function decorate(block) {
   navWrapper.className = 'nav-wrapper';
   navWrapper.append(nav);
   block.append(navWrapper);
+  
+  console.log('Header decoration complete');
 }

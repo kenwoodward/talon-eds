@@ -229,23 +229,102 @@ header nav .nav-sections ul > li > ul > li {
     position: relative;
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li > ul {
+  /* All nested dropdowns - using more specific selectors */
+  header nav .nav-sections ul ul {
     display: none;
-    position: relative;
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > ul {
-    display: block;
     position: absolute;
-    left: -24px;
     width: 200px;
-    top: 150%;
     padding: 16px;
     background-color: var(--light-color);
     white-space: initial;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li > ul::before {
+  /* First level dropdowns (Region) */
+  header nav .nav-sections .default-content-wrapper > ul > li > ul {
+    left: -24px;
+    top: 150%;
+    z-index: 10;
+  }
+
+  /* Show first level dropdowns when expanded */
+  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > ul {
+    display: block !important;
+  }
+
+  /* Second level dropdowns (Utah) - FIXED SELECTOR */
+  header nav .nav-sections ul ul ul {
+    left: 100%;
+    top: 0;
+    z-index: 11;
+  }
+
+  /* Show second level dropdowns when parent is expanded - FIXED SELECTOR */
+  header nav .nav-sections ul ul li[aria-expanded='true'] > ul {
+    display: block !important;
+  }
+
+  /* Alternative selector for second level - try this if above doesn't work */
+  header nav .nav-sections .default-content-wrapper > ul > li > ul > li[aria-expanded='true'] > ul {
+    display: block !important;
+  }
+
+  /* Dropdown arrows for all nested levels */
+  header nav .nav-sections ul ul .nav-drop::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0.5em;
+    right: 2px;
+    transform: rotate(135deg);
+    width: 6px;
+    height: 6px;
+    border: 2px solid currentcolor;
+    border-radius: 0 1px 0 0;
+    border-width: 2px 2px 0 0;
+  }
+
+  header nav .nav-sections ul ul .nav-drop[aria-expanded='true']::after {
+    top: unset;
+    bottom: 0.5em;
+    transform: rotate(315deg);
+  }
+
+  /* Right-pointing arrows for nested dropdowns */
+  header nav .nav-sections ul ul .nav-drop::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0.5em;
+    right: 2px;
+    transform: rotate(45deg);
+    width: 6px;
+    height: 6px;
+    border: 2px solid currentcolor;
+    border-radius: 0 1px 0 0;
+    border-width: 2px 2px 0 0;
+  }
+
+  header nav .nav-sections ul ul .nav-drop[aria-expanded='true']::before {
+    top: unset;
+    bottom: 0.5em;
+    transform: rotate(225deg);
+  }
+
+  /* Dropdown arrows for first level only */
+  header nav .nav-sections .default-content-wrapper > ul > li.nav-drop::before {
+    display: none;
+  }
+
+  /* Dropdown arrows for nested levels only */
+  header nav .nav-sections ul ul .nav-drop::after {
+    display: none;
+  }
+
+  /* Dropdown shadows and borders */
+  header nav .nav-sections ul ul::before {
     content: '';
     position: absolute;
     top: -8px;
@@ -257,9 +336,33 @@ header nav .nav-sections ul > li > ul > li {
     border-bottom: 8px solid var(--light-color);
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li > ul > li {
-    padding: 8px 0;
+  /* Adjust arrow position for nested dropdowns */
+  header nav .nav-sections ul ul ul::before {
+    top: 16px;
+    left: -8px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid var(--light-color);
+    border-bottom: 8px solid transparent;
+    border-top: 8px solid transparent;
   }
+
+  header nav .nav-sections ul ul > li {
+    padding: 8px 0;
+    position: relative;
+  }
+
+  /* Hover effects for better UX */
+  header nav .nav-sections ul ul > li:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 2px;
+  }
+
+  /* Debug: Make sure expanded items are visible */
+  header nav .nav-sections .nav-drop[aria-expanded='true'] {
+    background-color: rgba(255, 0, 0, 0.1);
+  }
+
+
 }
 
 /* tools */

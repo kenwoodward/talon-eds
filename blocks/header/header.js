@@ -226,6 +226,37 @@ export default async function decorate(block) {
     brandLink.closest('.button-container').className = '';
   }
 
+  // Add logo and title to nav-brand
+  if (navBrand) {
+    // Clear existing content
+    navBrand.innerHTML = '';
+    
+    // Create new brand link with logo and title
+    const newBrandLink = document.createElement('a');
+    newBrandLink.href = '/';
+    newBrandLink.className = 'nav-brand-link';
+    
+    // Create logo image
+    const logo = document.createElement('img');
+    logo.src = '/icons/ghosttown.svg';
+    logo.alt = 'Ghost Towns Logo';
+    logo.width = 60;
+    logo.height = 60;
+    logo.className = 'nav-logo';
+    
+    // Create title text
+    const title = document.createElement('span');
+    title.textContent = 'Ghost Towns';
+    title.className = 'nav-title';
+    
+    // Append logo and title to brand link
+    newBrandLink.appendChild(logo);
+    newBrandLink.appendChild(title);
+    
+    // Append brand link to nav-brand
+    navBrand.appendChild(newBrandLink);
+  }
+
   const navSections = nav.querySelector('.nav-sections');
   console.log('Found navSections:', navSections);
   

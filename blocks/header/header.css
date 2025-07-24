@@ -138,15 +138,30 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 /* brand */
 header .nav-brand {
   grid-area: brand;
-  flex-basis: 128px;
+  flex-basis: 200px;
   font-size: var(--heading-font-size-s);
   font-weight: 700;
   line-height: 1;
 }
 
-header nav .nav-brand img {
-  width: 128px;
-  height: auto;
+header nav .nav-brand-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+header nav .nav-logo {
+  width: 60px;
+  height: 60px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+header nav .nav-title {
+  font-family: var(--heading-font-family);
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 /* sections */
